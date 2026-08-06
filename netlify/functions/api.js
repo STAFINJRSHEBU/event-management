@@ -53,6 +53,7 @@ router.get('/seed', async (req, res) => {
     const User = require('../../models/User');
     const Event = require('../../models/Event');
     const Notification = require('../../models/Notification');
+    const Registration = require('../../models/Registration');
     
     // Seed default admin
     const adminExists = await User.findOne({ email: 'admin@school.com' });
