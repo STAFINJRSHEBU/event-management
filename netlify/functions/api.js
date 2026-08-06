@@ -70,14 +70,7 @@ router.get('/seed', async (req, res) => {
     // Seed sample events
     const eventCount = await Event.countDocuments();
     if (eventCount === 0) {
-      const sampleEvents = [
-        { name: 'Annual Music Fest', date: new Date('2026-05-10'), time: '10:00 AM', description: 'A grand celebration of music featuring school bands and solo performances.', capacity: 200, category: 'music', venue: 'Main Auditorium', status: 'open' },
-        { name: 'Inter-School Dance Battle', date: new Date('2026-05-18'), time: '02:00 PM', description: 'Dance competition open for all students. Various dance styles welcome!', capacity: 150, category: 'dance', venue: 'School Hall', status: 'open' },
-        { name: 'Science & Tech Expo', date: new Date('2026-05-25'), time: '09:00 AM', description: 'Showcase your innovative projects and inventions to judges and peers.', capacity: 100, category: 'technology', venue: 'Science Block', status: 'open' },
-        { name: 'Sports Day 2026', date: new Date('2026-06-05'), time: '07:00 AM', description: 'Annual sports competition with athletics, football, and team games.', capacity: 500, category: 'sports', venue: 'School Ground', status: 'upcoming' },
-        { name: 'Art & Culture Week', date: new Date('2026-06-12'), time: '11:00 AM', description: 'Celebrate art, craft, and cultural diversity with exhibitions and live demos.', capacity: 80, category: 'arts', venue: 'Art Gallery', status: 'open' },
-        { name: 'Academic Quiz Championship', date: new Date('2026-04-20'), time: '01:00 PM', description: 'Test your knowledge across subjects in this exciting quiz competition.', capacity: 60, category: 'academic', venue: 'Conference Room', status: 'open' }
-      ];
+      const sampleEvents = require('../../events_data.json');
       await Event.insertMany(sampleEvents);
     }
     
