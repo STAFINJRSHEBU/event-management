@@ -68,11 +68,11 @@ router.get('/seed', async (req, res) => {
     }
     
     // Seed sample events
-    const eventCount = await Event.countDocuments();
-    if (eventCount === 0) {
-      const sampleEvents = require('../../events_data.json');
-      await Event.insertMany(sampleEvents);
-    }
+    await Event.deleteMany({});
+    await Registration.deleteMany({});
+    
+    const sampleEvents = require('../../events_data.json');
+    await Event.insertMany(sampleEvents);
     
     // Seed sample notifications
     const notifCount = await Notification.countDocuments();
