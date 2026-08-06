@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EduEvents — School Event Management System</title>
+  <meta name="description"
+    content="Premium School Event Management System with AI-powered recommendations, real-time registrations, and modern dashboard." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+
+<body>
+
+  <!-- ===== NAVBAR ===== -->
+  <nav class="navbar navbar-expand-lg glass-nav fixed-top" id="mainNav">
+    <div class="container-fluid px-4">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="#">
+        <div class="brand-icon"><i class="fas fa-graduation-cap"></i></div>
+        <span class="brand-text">EduEvents</span>
+      </a>
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <i class="fas fa-bars text-white"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto align-items-center gap-2" id="navLinks">
+          <li class="nav-item"><a class="nav-link" href="#" onclick="showPage('events')"><i
+                class="fas fa-calendar me-1"></i>Events</a></li>
+          <li class="nav-item"><a class="nav-link" href="#" onclick="showPage('notifications')"><i
+                class="fas fa-bell me-1"></i>Notifications</a></li>
+          <li class="nav-item d-none" id="myRegistrationsNav"><a class="nav-link" href="#"
+              onclick="showPage('myRegistrations')"><i class="fas fa-ticket me-1"></i>My Tickets</a></li>
+          <li class="nav-item d-none" id="adminNavItem"><a class="nav-link" href="#" onclick="showPage('admin')"><i
+                class="fas fa-tachometer-alt me-1"></i>Admin Panel</a></li>
+          <li class="nav-item" id="loginNavItem"><button class="btn btn-outline-primary btn-sm px-3"
+              onclick="showPage('login')">Sign In</button></li>
+          <li class="nav-item d-none" id="userNavItem">
+            <div class="user-avatar-nav dropdown">
+              <button class="btn user-btn dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown">
+                <div class="avatar-circle" id="navAvatar"></div>
+                <span id="navUserName"></span>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end glass-dropdown">
+                <li><a class="dropdown-item" href="#" onclick="showPage('profile')"><i
+                      class="fas fa-user me-2"></i>Profile</a></li>
+                <li><a class="dropdown-item" href="#" onclick="showPage('myRegistrations')"><i
+                      class="fas fa-ticket me-2"></i>My Registrations</a></li>
+                <li>
+                  <hr class="dropdown-divider border-secondary" />
+                </li>
+                <li><a class="dropdown-item text-danger" href="#" onclick="logout()"><i
+                      class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===== PAGES WRAPPER ===== -->
+  <div id="app">
+
+    <!-- ============ LANDING / HOME PAGE ============ -->
+    <div id="page-home" class="page active">
+      <!-- Hero Section -->
+      <section class="hero-section">
+        <div class="hero-bg-glow"></div>
+        <div class="hero-particles" id="heroParticles"></div>
+        <div class="container text-center hero-content">
+          <div class="hero-badge mb-3">
+            <i class="fas fa-sparkles me-2"></i>AI-Powered Event Management
+          </div>
+          <h1 class="hero-title">Discover & Join<br /><span class="gradient-text">Extraordinary Events</span></h1>
+          <p class="hero-subtitle">Your school's premium event hub — register, explore, and never miss a moment.</p>
+          <div class="hero-search-wrapper mt-4">
+            <div class="hero-search-box">
+              <i class="fas fa-search search-icon"></i>
+              <input type="text" id="heroSearch" class="hero-search-input" placeholder="Search events, categories..." />
+              <button class="btn btn-primary hero-search-btn" onclick="heroSearch()">Search</button>
+            </div>
+          </div>
+          <div class="hero-cta mt-4 d-flex gap-3 justify-content-center flex-wrap">
+            <button class="btn btn-primary btn-lg px-5" onclick="showPage('events')"><i
+                class="fas fa-calendar-alt me-2"></i>Browse Events</button>
+            <button class="btn btn-outline-light btn-lg px-5" onclick="showPage('login')"><i
+                class="fas fa-user-plus me-2"></i>Get Started</button>
+          </div>
+          <div class="hero-stats mt-5 row g-3 justify-content-center" id="heroStats">
+            <div class="col-auto">
+              <div class="hero-stat-pill"><span class="stat-num" id="statEvents">0</span><span> Events</span></div>
+            </div>
+            <div class="col-auto">
+              <div class="hero-stat-pill"><span class="stat-num" id="statUsers">0</span><span> Students</span></div>
+            </div>
+            <div class="col-auto">
+              <div class="hero-stat-pill"><span class="stat-num" id="statRegs">0</span><span> Registrations</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Features Section -->
+      <section class="features-section py-5">
+        <div class="container">
+          <div class="section-header text-center mb-5">
+            <h2 class="section-title">Everything You Need</h2>
+            <p class="section-subtitle">A complete event management experience with AI-powered tools</p>
+          </div>
+          <div class="row g-4">
+            <div class="col-md-4">
+              <div class="feature-card glass-card h-100">
+                <div class="feature-icon-wrap"><i class="fas fa-robot"></i></div>
+                <h4>AI Recommendations</h4>
+                <p>Smart event suggestions based on your interests and activity patterns.</p>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="feature-card glass-card h-100">
+                <div class="feature-icon-wrap"><i class="fas fa-microphone"></i></div>
+                <h4>Voice Input</h4>
+                <p>Fill forms hands-free with integrated browser speech recognition.</p>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="feature-card glass-card h-100">
+                <div class="feature-icon-wrap"><i class="fas fa-bolt"></i></div>
+                <h4>Real-Time Updates</h4>
+                <p>Live seat availability, instant registration confirmation, and notifications.</p>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="feature-card glass-card h-100">
+                <div class="feature-icon-wrap"><i class="fas fa-comments"></i></div>
+                <h4>AI Chatbot</h4>
+                <p>24/7 assistant to answer event questions and guide your journey.</p>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="feature-card glass-card h-100">
+                <div class="feature-icon-wrap"><i class="fas fa-chart-bar"></i></div>
+                <h4>Admin Analytics</h4>
+                <p>Deep insights into participation trends and event performance.</p>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="feature-card glass-card h-100">
+                <div class="feature-icon-wrap"><i class="fas fa-shield-alt"></i></div>
+                <h4>Secure & Reliable</h4>
+                <p>JWT-based auth with role-based access control for all users.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ============ EVENTS PAGE ============ -->
+    <div id="page-events" class="page">
+      <div class="page-hero mini-hero">
+        <div class="container">
+          <h1 class="page-title"><i class="fas fa-calendar-alt me-3"></i>Events</h1>
+          <p class="page-subtitle">Discover and register for school events</p>
+        </div>
+      </div>
+      <div class="container py-4">
+        <!-- Filters -->
+        <div class="filter-bar glass-card mb-4">
+          <div class="row g-3 align-items-center">
+            <div class="col-md-4">
+              <div class="search-input-wrap">
+                <i class="fas fa-search"></i>
+                <input type="text" id="eventSearch" class="form-control glass-input" placeholder="Search events..."
+                  oninput="filterEvents()" />
+              </div>
+            </div>
+            <div class="col-md-3">
+              <select id="categoryFilter" class="form-select glass-input" onchange="filterEvents()">
+                <option value="">All Categories</option>
+                <option value="music">🎵 Music</option>
+                <option value="dance">💃 Dance</option>
+                <option value="sports">⚽ Sports</option>
+                <option value="academic">📚 Academic</option>
+                <option value="arts">🎨 Arts</option>
+                <option value="technology">💻 Technology</option>
+                <option value="culture">🎭 Culture</option>
+                <option value="other">🌟 Other</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <select id="statusFilter" class="form-select glass-input" onchange="filterEvents()">
+                <option value="">All Status</option>
+                <option value="open">✅ Open</option>
+                <option value="upcoming">🔜 Upcoming</option>
+                <option value="closed">🔒 Closed</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <button class="btn btn-primary w-100" onclick="openAIRecommend()"><i class="fas fa-robot me-2"></i>AI
+                Pick</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI Recommendation Section -->
+        <div id="aiRecommendSection" class="glass-card mb-4 d-none">
+          <h5 class="mb-3"><i class="fas fa-robot me-2 text-primary"></i>AI Event Recommender</h5>
+          <div class="row g-2 align-items-center">
+            <div class="col-md-8">
+              <div class="voice-input-wrap">
+                <input type="text" id="aiKeywords" class="form-control glass-input"
+                  placeholder="Type interests: music, sports, dance, tech..." />
+                <button class="btn btn-outline-primary voice-btn" onclick="startVoiceInput('aiKeywords')"
+                  title="Voice input">
+                  <i class="fas fa-microphone"></i>
+                </button>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <button class="btn btn-primary w-100" onclick="getAIRecommendations()"><i
+                  class="fas fa-magic me-2"></i>Recommend Events</button>
+            </div>
+          </div>
+          <div id="aiRecommendResults" class="mt-3"></div>
+        </div>
+
+        <!-- Events Grid -->
+        <div id="eventsGrid" class="row g-4">
+          <div class="col-12 text-center py-5">
+            <div class="spinner-glow mx-auto"></div>
+            <p class="text-muted mt-3">Loading events...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ LOGIN PAGE ============ -->
+    <div id="page-login" class="page">
+      <div class="auth-page">
+        <div class="auth-bg-glow"></div>
+        <div class="auth-container">
+          <div class="auth-card glass-card">
+            <div class="auth-header text-center mb-4">
+              <div class="brand-icon mx-auto mb-3"><i class="fas fa-graduation-cap"></i></div>
+              <h2 class="auth-title">Welcome Back</h2>
+              <p class="text-muted">Sign in to your EduEvents account</p>
+            </div>
+            <div class="auth-tabs mb-4">
+              <button class="auth-tab active" id="loginTabBtn" onclick="switchAuthTab('login')">Sign In</button>
+              <button class="auth-tab" id="signupTabBtn" onclick="switchAuthTab('signup')">Sign Up</button>
+            </div>
+
+            <!-- Login Form -->
+            <div id="loginForm">
+              <div class="mb-3">
+                <label class="form-label text-muted small">Email Address</label>
+                <div class="input-icon-wrap">
+                  <i class="fas fa-envelope"></i>
+                  <input type="email" id="loginEmail" class="form-control glass-input" placeholder="you@school.com" />
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label text-muted small">Password</label>
+                <div class="input-icon-wrap">
+                  <i class="fas fa-lock"></i>
+                  <input type="password" id="loginPassword" class="form-control glass-input" placeholder="••••••••" />
+                  <button class="btn-eye" onclick="togglePassword('loginPassword')"><i class="fas fa-eye"></i></button>
+                </div>
+              </div>
+              <div id="loginError" class="alert alert-danger d-none py-2 small"></div>
+              <button class="btn btn-primary w-100 mt-2" id="loginBtn" onclick="handleLogin()">
+                <span class="btn-text"><i class="fas fa-sign-in-alt me-2"></i>Sign In</span>
+                <span class="btn-loader d-none">
+                  <div class="spinner-border spinner-border-sm"></div>
+                </span>
+              </button>
+              <div class="auth-hint mt-3 text-center">
+                <small class="text-muted">Admin: admin@school.com / admin123</small>
+              </div>
+            </div>
+
+            <!-- Signup Form -->
+            <div id="signupForm" class="d-none">
+              <div class="mb-3">
+                <label class="form-label text-muted small">Full Name</label>
+                <div class="input-icon-wrap">
+                  <i class="fas fa-user"></i>
+                  <input type="text" id="signupName" class="form-control glass-input" placeholder="Your full name" />
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label text-muted small">Email Address</label>
+                <div class="input-icon-wrap">
+                  <i class="fas fa-envelope"></i>
+                  <input type="email" id="signupEmail" class="form-control glass-input" placeholder="you@school.com" />
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label text-muted small">Password</label>
+                <div class="input-icon-wrap">
+                  <i class="fas fa-lock"></i>
+                  <input type="password" id="signupPassword" class="form-control glass-input"
+                    placeholder="Min. 6 characters" />
+                  <button class="btn-eye" onclick="togglePassword('signupPassword')"><i class="fas fa-eye"></i></button>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label text-muted small">Participant Type</label>
+                <div class="input-icon-wrap">
+                  <i class="fas fa-id-badge"></i>
+                  <select id="signupType" class="form-select glass-input">
+                    <option value="Internal">Internal (School Student)</option>
+                    <option value="External">External (Outside Participant)</option>
+                  </select>
+                </div>
+              </div>
+              <div id="signupError" class="alert alert-danger d-none py-2 small"></div>
+              <button class="btn btn-primary w-100 mt-2" id="signupBtn" onclick="handleSignup()">
+                <span class="btn-text"><i class="fas fa-user-plus me-2"></i>Create Account</span>
+                <span class="btn-loader d-none">
+                  <div class="spinner-border spinner-border-sm"></div>
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ NOTIFICATIONS PAGE ============ -->
+    <div id="page-notifications" class="page">
+      <div class="page-hero mini-hero">
+        <div class="container">
+          <h1 class="page-title"><i class="fas fa-bell me-3"></i>Notifications</h1>
+          <p class="page-subtitle">Latest announcements and updates</p>
+        </div>
+      </div>
+      <div class="container py-4">
+        <div id="notificationsContainer" class="row g-3">
+          <div class="col-12 text-center py-5">
+            <div class="spinner-glow mx-auto"></div>
+            <p class="text-muted mt-3">Loading notifications...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ MY REGISTRATIONS PAGE ============ -->
+    <div id="page-myRegistrations" class="page">
+      <div class="page-hero mini-hero">
+        <div class="container">
+          <h1 class="page-title"><i class="fas fa-ticket me-3"></i>My Registrations</h1>
+          <p class="page-subtitle">Events you've signed up for</p>
+        </div>
+      </div>
+      <div class="container py-4">
+        <div id="myRegistrationsContainer" class="row g-4"></div>
+      </div>
+    </div>
+
+    <!-- ============ PROFILE PAGE ============ -->
+    <div id="page-profile" class="page">
+      <div class="page-hero mini-hero">
+        <div class="container">
+          <h1 class="page-title"><i class="fas fa-user me-3"></i>My Profile</h1>
+        </div>
+      </div>
+      <div class="container py-4">
+        <div class="row justify-content-center">
+          <div class="col-md-6">
+            <div class="glass-card text-center p-5">
+              <div class="profile-avatar mx-auto mb-4" id="profileAvatar"></div>
+              <h3 id="profileName" class="fw-bold"></h3>
+              <p id="profileEmail" class="text-muted"></p>
+              <div class="d-flex justify-content-center gap-2 mt-3">
+                <span class="badge-glass" id="profileRole"></span>
+                <span class="badge-glass badge-glass-cyan" id="profileType"></span>
+              </div>
+              <div class="mt-4 glass-card p-4 text-start">
+                <div class="row g-3">
+                  <div class="col-6">
+                    <div class="stat-mini">
+                      <div class="stat-mini-num" id="profileRegCount">0</div>
+                      <div class="stat-mini-label">Registrations</div>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="stat-mini">
+                      <div class="stat-mini-num" id="profileMember">—</div>
+                      <div class="stat-mini-label">Member Since</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ ADMIN PANEL ============ -->
+    <div id="page-admin" class="page">
+      <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar" id="adminSidebar">
+          <div class="sidebar-brand">
+            <div class="brand-icon small"><i class="fas fa-graduation-cap"></i></div>
+            <span>EduEvents</span>
+          </div>
+          <div class="sidebar-user" id="sidebarUser"></div>
+          <nav class="sidebar-nav">
+            <a href="#" class="sidebar-link active" onclick="switchAdminTab('dashboard')" id="tab-dashboard"><i
+                class="fas fa-tachometer-alt"></i><span>Dashboard</span></a>
+            <a href="#" class="sidebar-link" onclick="switchAdminTab('manageEvents')" id="tab-manageEvents"><i
+                class="fas fa-calendar-plus"></i><span>Events</span></a>
+            <a href="#" class="sidebar-link" onclick="switchAdminTab('participants')" id="tab-participants"><i
+                class="fas fa-users"></i><span>Participants</span></a>
+            <a href="#" class="sidebar-link" onclick="switchAdminTab('adminNotifications')"
+              id="tab-adminNotifications"><i class="fas fa-bell"></i><span>Notifications</span></a>
+            <a href="#" class="sidebar-link" onclick="switchAdminTab('aiInsights')" id="tab-aiInsights"><i
+                class="fas fa-brain"></i><span>AI Insights</span></a>
+            <div class="sidebar-divider"></div>
+            <a href="#" class="sidebar-link" onclick="showPage('home')"><i class="fas fa-home"></i><span>Back to
+                Site</span></a>
+            <a href="#" class="sidebar-link text-danger-soft" onclick="logout()"><i
+                class="fas fa-sign-out-alt"></i><span>Logout</span></a>
+          </nav>
+        </aside>
+        <!-- Sidebar toggle for mobile -->
+        <button class="sidebar-toggle-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+
+        <!-- Admin Content -->
+        <main class="admin-content" id="adminContent">
+
+          <!-- DASHBOARD TAB -->
+          <div id="adminTab-dashboard" class="admin-tab active">
+            <div class="admin-topbar">
+              <div>
+                <h2 class="admin-page-title">Dashboard</h2>
+                <p class="text-muted small">Welcome back, let's see what's happening</p>
+              </div>
+              <div class="d-flex gap-2">
+                <button class="btn btn-primary btn-sm" onclick="switchAdminTab('manageEvents'); openAddEventModal()"><i
+                    class="fas fa-plus me-2"></i>New Event</button>
+              </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="row g-4 mb-4">
+              <div class="col-sm-6 col-xl-3">
+                <div class="stat-card glass-card">
+                  <div class="stat-card-icon" style="background: linear-gradient(135deg,#6366f1,#8b5cf6)"><i
+                      class="fas fa-users"></i></div>
+                  <div class="stat-info">
+                    <div class="stat-label">Total Users</div>
+                    <div class="stat-value" id="dashTotalUsers">—</div>
+                  </div>
+                  <div class="stat-trend up"><i class="fas fa-arrow-up"></i> Active</div>
+                </div>
+              </div>
+              <div class="col-sm-6 col-xl-3">
+                <div class="stat-card glass-card">
+                  <div class="stat-card-icon" style="background: linear-gradient(135deg,#38bdf8,#0ea5e9)"><i
+                      class="fas fa-calendar-alt"></i></div>
+                  <div class="stat-info">
+                    <div class="stat-label">Total Events</div>
+                    <div class="stat-value" id="dashTotalEvents">—</div>
+                  </div>
+                  <div class="stat-trend up"><i class="fas fa-arrow-up"></i> Live</div>
+                </div>
+              </div>
+              <div class="col-sm-6 col-xl-3">
+                <div class="stat-card glass-card">
+                  <div class="stat-card-icon" style="background: linear-gradient(135deg,#22c55e,#16a34a)"><i
+                      class="fas fa-ticket-alt"></i></div>
+                  <div class="stat-info">
+                    <div class="stat-label">Registrations</div>
+                    <div class="stat-value" id="dashTotalRegs">—</div>
+                  </div>
+                  <div class="stat-trend up"><i class="fas fa-arrow-up"></i> Total</div>
+                </div>
+              </div>
+              <div class="col-sm-6 col-xl-3">
+                <div class="stat-card glass-card">
+                  <div class="stat-card-icon" style="background: linear-gradient(135deg,#f59e0b,#d97706)"><i
+                      class="fas fa-star"></i></div>
+                  <div class="stat-info">
+                    <div class="stat-label">Popular Event</div>
+                    <div class="stat-value small" id="dashPopularEvent">—</div>
+                  </div>
+                  <div class="stat-trend"><i class="fas fa-fire"></i> Trending</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="row g-4 mb-4">
+              <div class="col-lg-8">
+                <div class="glass-card chart-card h-100">
+                  <h5 class="chart-title"><i class="fas fa-chart-line me-2 text-primary"></i>Registrations (Last 7 Days)
+                  </h5>
+                  <div style="position: relative; height: 260px; width: 100%;">
+                    <canvas id="registrationsChart"></canvas>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-4">
+                <div class="glass-card chart-card h-100">
+                  <h5 class="chart-title"><i class="fas fa-chart-pie me-2 text-primary"></i>Participant Types</h5>
+                  <div style="position: relative; height: 260px; width: 100%; display: flex; justify-content: center;">
+                    <canvas id="participantPieChart"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row g-4">
+              <div class="col-lg-6">
+                <div class="glass-card chart-card h-100">
+                  <h5 class="chart-title"><i class="fas fa-tags me-2 text-primary"></i>Events by Category</h5>
+                  <div style="position: relative; height: 220px; width: 100%;">
+                    <canvas id="categoryChart"></canvas>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="glass-card">
+                  <h5 class="chart-title mb-3"><i class="fas fa-fire me-2 text-orange"></i>Quick Stats</h5>
+                  <div id="quickStatsList"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- MANAGE EVENTS TAB -->
+          <div id="adminTab-manageEvents" class="admin-tab">
+            <div class="admin-topbar">
+              <div>
+                <h2 class="admin-page-title">Manage Events</h2>
+              </div>
+              <button class="btn btn-primary" onclick="openAddEventModal()"><i class="fas fa-plus me-2"></i>Add
+                Event</button>
+            </div>
+            <div class="glass-card">
+              <div class="table-responsive">
+                <table class="table admin-table" id="eventsAdminTable">
+                  <thead>
+                    <tr>
+                      <th>Event</th>
+                      <th>Date & Time</th>
+                      <th>Category</th>
+                      <th>Capacity</th>
+                      <th>Registered</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="eventsAdminTbody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- PARTICIPANTS TAB -->
+          <div id="adminTab-participants" class="admin-tab">
+            <div class="admin-topbar">
+              <div>
+                <h2 class="admin-page-title">All Participants</h2>
+              </div>
+              <div class="d-flex gap-2">
+                <select id="participantTypeFilter" class="form-select glass-input" style="width:180px"
+                  onchange="loadAdminRegistrations()">
+                  <option value="">All Types</option>
+                  <option value="Internal">Internal</option>
+                  <option value="External">External</option>
+                </select>
+              </div>
+            </div>
+            <div class="glass-card">
+              <div class="table-responsive">
+                <table class="table admin-table">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>Type</th>
+                      <th>Event</th>
+                      <th>Registered At</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="participantsTbody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- NOTIFICATIONS TAB -->
+          <div id="adminTab-adminNotifications" class="admin-tab">
+            <div class="admin-topbar">
+              <div>
+                <h2 class="admin-page-title">Notifications</h2>
+              </div>
+            </div>
+            <div class="glass-card mb-4">
+              <h5 class="mb-3"><i class="fas fa-paper-plane me-2 text-primary"></i>Send New Notification</h5>
+              <div class="row g-3">
+                <div class="col-md-8">
+                  <textarea id="notifMessage" class="form-control glass-input" rows="3"
+                    placeholder="Enter notification message..."></textarea>
+                </div>
+                <div class="col-md-2">
+                  <select id="notifType" class="form-select glass-input">
+                    <option value="info">ℹ️ Info</option>
+                    <option value="success">✅ Success</option>
+                    <option value="warning">⚠️ Warning</option>
+                    <option value="alert">🚨 Alert</option>
+                  </select>
+                </div>
+                <div class="col-md-2">
+                  <button class="btn btn-primary w-100 h-100" onclick="sendNotification()"><i
+                      class="fas fa-paper-plane me-2"></i>Send</button>
+                </div>
+              </div>
+            </div>
+            <div id="adminNotifList" class="row g-3"></div>
+          </div>
+
+          <!-- AI INSIGHTS TAB -->
+          <div id="adminTab-aiInsights" class="admin-tab">
+            <div class="admin-topbar">
+              <div>
+                <h2 class="admin-page-title">AI Insights</h2>
+              </div>
+            </div>
+            <div class="row g-4" id="aiInsightsContent">
+              <div class="col-12 text-center py-5">
+                <div class="spinner-glow mx-auto"></div>
+                <p class="text-muted mt-3">Analyzing patterns...</p>
+              </div>
+            </div>
+          </div>
+
+        </main>
+      </div>
+    </div>
+
+  </div><!-- end #app -->
+
+  <!-- ===== REGISTRATION INFO MODAL ===== -->
+  <div class="modal fade" id="registrationFormModal" tabindex="-1" style="z-index: 1060;">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content glass-modal">
+        <div class="modal-header border-0">
+          <h5 class="modal-title">Participant Details</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p class="text-secondary small mb-4">Please provide your details to confirm registration. Note: External
+            participants must provide their institution name.</p>
+          <div class="mb-3" id="classInputGroup">
+            <label class="form-label text-muted small">Class / Grade <span class="text-danger">*</span></label>
+            <input type="text" id="regClassInfo" class="form-control glass-input"
+              placeholder="e.g. 10th Grade, Section A" />
+          </div>
+          <div class="mb-3" id="schoolInputGroup">
+            <label class="form-label text-muted small">School / Institution Name <span
+                class="text-danger">*</span></label>
+            <input type="text" id="regSchoolInfo" class="form-control glass-input"
+              placeholder="Your school or college name" />
+          </div>
+          <div class="mb-3">
+            <label class="form-label text-muted small">Contact Number <span class="text-danger">*</span></label>
+            <input type="text" id="regPhoneInfo" class="form-control glass-input" placeholder="Phone number" />
+          </div>
+          <div id="regFormError" class="alert alert-danger d-none py-2 small"></div>
+        </div>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" id="confirmRegBtn" onclick="submitRegistration()">
+            <i class="fas fa-check me-2"></i>Confirm Register
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== EVENT DETAIL MODAL ===== -->
+  <div class="modal fade" id="eventDetailModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content glass-modal">
+        <div class="modal-header border-0">
+          <h5 class="modal-title" id="modalEventName"></h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body" id="modalEventBody"></div>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="modalRegisterBtn" onclick="registerForEvent()">
+            <i class="fas fa-ticket-alt me-2"></i>Register Now
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ADD/EDIT EVENT MODAL ===== -->
+  <div class="modal fade" id="addEventModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content glass-modal">
+        <div class="modal-header border-0">
+          <h5 class="modal-title" id="addEventModalTitle">Add New Event</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="editEventId" />
+          <div class="row g-3">
+            <div class="col-md-8"><label class="form-label text-muted small">Event Name</label><input type="text"
+                id="eventFormName" class="form-control glass-input" placeholder="Event name" /></div>
+            <div class="col-md-4"><label class="form-label text-muted small">Category</label>
+              <select id="eventFormCategory" class="form-select glass-input">
+                <option value="music">🎵 Music</option>
+                <option value="dance">💃 Dance</option>
+                <option value="sports">⚽ Sports</option>
+                <option value="academic">📚 Academic</option>
+                <option value="arts">🎨 Arts</option>
+                <option value="technology">💻 Technology</option>
+                <option value="culture">🎭 Culture</option>
+                <option value="other">🌟 Other</option>
+              </select>
+            </div>
+            <div class="col-md-6"><label class="form-label text-muted small">Date</label><input type="date"
+                id="eventFormDate" class="form-control glass-input" /></div>
+            <div class="col-md-3"><label class="form-label text-muted small">Time</label><input type="time"
+                id="eventFormTime" class="form-control glass-input" /></div>
+            <div class="col-md-3"><label class="form-label text-muted small">Capacity</label><input type="number"
+                id="eventFormCapacity" class="form-control glass-input" min="1" placeholder="Max seats" /></div>
+            <div class="col-md-6"><label class="form-label text-muted small">Venue</label><input type="text"
+                id="eventFormVenue" class="form-control glass-input" placeholder="Location/Venue" /></div>
+            <div class="col-md-6"><label class="form-label text-muted small">Image URL</label><input type="url"
+                id="eventFormImage" class="form-control glass-input" placeholder="https://picsum.photos/..." /></div>
+            <div class="col-md-4"><label class="form-label text-muted small">Status</label>
+              <select id="eventFormStatus" class="form-select glass-input">
+                <option value="open">Open</option>
+                <option value="upcoming">Upcoming</option>
+                <option value="closed">Closed</option>
+                <option value="completed">Completed</option>
+              </select>
+            </div>
+            <div class="col-12"><label class="form-label text-muted small">Description</label><textarea
+                id="eventFormDesc" class="form-control glass-input" rows="3"
+                placeholder="Event description..."></textarea></div>
+          </div>
+          <div id="eventFormError" class="alert alert-danger d-none mt-3 py-2 small"></div>
+        </div>
+        <div class="modal-footer border-0">
+          <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button class="btn btn-primary" onclick="saveEvent()"><i class="fas fa-save me-2"></i>Save Event</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TOAST NOTIFICATIONS ===== -->
+  <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index:9999">
+    <div id="toastEl" class="toast glass-toast" role="alert" aria-live="assertive">
+      <div class="toast-body d-flex align-items-center gap-3">
+        <i class="toast-icon fas fa-check-circle"></i>
+        <span id="toastMsg"></span>
+        <button type="button" class="btn-close btn-close-white ms-auto" data-bs-dismiss="toast"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== CHATBOT ===== -->
+  <div class="chatbot-fab" onclick="toggleChatbot()" id="chatbotFab" title="AI Assistant">
+    <div class="chatbot-fab-inner">
+      <i class="fas fa-robot chatbot-open-icon"></i>
+      <i class="fas fa-times chatbot-close-icon d-none"></i>
+    </div>
+    <div class="chatbot-badge" id="chatbotBadge">1</div>
+  </div>
+  <div class="chatbot-panel glass-card d-none" id="chatbotPanel">
+    <div class="chatbot-header">
+      <div class="d-flex align-items-center gap-2">
+        <div class="chatbot-avatar"><i class="fas fa-robot"></i></div>
+        <div>
+          <div class="chatbot-name">EduBot</div>
+          <div class="chatbot-status"><span class="status-dot"></span>Online</div>
+        </div>
+      </div>
+      <button class="btn-icon" onclick="toggleChatbot()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="chatbot-messages" id="chatbotMessages">
+      <div class="chat-msg bot">
+        <div class="chat-bubble">👋 Hi! I'm EduBot, your AI assistant. How can I help you today?</div>
+      </div>
+      <div class="chat-msg bot">
+        <div class="chat-bubble">You can ask me about events, registrations, or anything about our system!</div>
+      </div>
+    </div>
+    <div class="chatbot-input-area">
+      <div class="chatbot-suggestions" id="chatSuggestions">
+        <button onclick="sendChatbotMsg('What events are available?')">📅 Events</button>
+        <button onclick="sendChatbotMsg('How do I register?')">📝 Register</button>
+        <button onclick="sendChatbotMsg('What is EduEvents?')">ℹ️ About</button>
+      </div>
+      <div class="chatbot-input-wrap">
+        <input type="text" id="chatInput" class="form-control" placeholder="Ask anything..."
+          onkeydown="if(event.key==='Enter')sendChatbotMsg()" />
+        <button class="btn btn-primary" onclick="sendChatbotMsg()"><i class="fas fa-paper-plane"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+
+</html>
